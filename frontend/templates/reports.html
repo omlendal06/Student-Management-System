@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">S</div>
+                <div>
+                    <strong>StudentMS</strong>
+                    <small>Admin Panel</small>
+                </div>
+            </div>
+            <nav class="side-nav">
+                <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+                <a href="{{ url_for('students') }}">👨‍🎓 Students</a>
+                <a href="{{ url_for('students') }}">＋ Add Student</a>
+                <a href="{{ url_for('courses') }}">📚 Courses</a>
+                <a class="active" href="{{ url_for('reports') }}">📈 Reports</a>
+                <a href="{{ url_for('settings') }}">⚙️ Settings</a>
+            </nav>
+        </aside>
+
+        <main class="main-panel">
+            <header class="topbar">
+                <div class="page-title-wrap">
+                    <button class="mobile-menu-btn" type="button">☰</button>
+                    <div>
+                        <p class="eyebrow">Insights</p>
+                        <h1>Reports</h1>
+                    </div>
+                </div>
+            </header>
+
+            <section class="stats-grid">
+                <article class="stats-card blue">
+                    <div class="stats-icon">👥</div>
+                    <div class="stats-meta">
+                        <span class="label">Total Students</span>
+                        <strong>{{ summary.total_students }}</strong>
+                    </div>
+                </article>
+                <article class="stats-card green">
+                    <div class="stats-icon">📚</div>
+                    <div class="stats-meta">
+                        <span class="label">Courses</span>
+                        <strong>{{ summary.total_courses }}</strong>
+                    </div>
+                </article>
+                <article class="stats-card orange">
+                    <div class="stats-icon">🧑‍🎓</div>
+                    <div class="stats-meta">
+                        <span class="label">New Entries</span>
+                        <strong>{{ summary.new_students }}</strong>
+                    </div>
+                </article>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <h3>Student Year Distribution</h3>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Students</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in summary.year_distribution %}
+                            <tr>
+                                <td>{{ item.label }}</td>
+                                <td>{{ item.value }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="2">No distribution data available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

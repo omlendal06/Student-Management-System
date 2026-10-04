@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">S</div>
+                <div>
+                    <strong>StudentMS</strong>
+                    <small>Admin Panel</small>
+                </div>
+            </div>
+            <nav class="side-nav">
+                <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+                <a class="active" href="{{ url_for('students') }}">👨‍🎓 Students</a>
+                <a href="{{ url_for('students') }}">＋ Add Student</a>
+                <a href="{{ url_for('courses') }}">📚 Courses</a>
+                <a href="{{ url_for('reports') }}">📈 Reports</a>
+                <a href="{{ url_for('settings') }}">⚙️ Settings</a>
+            </nav>
+        </aside>
+
+        <main class="main-panel">
+            <header class="topbar">
+                <div class="page-title-wrap">
+                    <button class="mobile-menu-btn" type="button">☰</button>
+                    <div>
+                        <p class="eyebrow">Profile</p>
+                        <h1>Student Details</h1>
+                    </div>
+                </div>
+            </header>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <h3>{{ student.name }}</h3>
+                    <div class="action-cell">
+                        <a class="small-btn secondary" href="{{ url_for('edit_student', student_id=student.student_id) }}">Edit</a>
+                        <form method="post" action="{{ url_for('delete_student', student_id=student.student_id) }}">
+                            <button class="small-btn danger" type="submit">Delete</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <span>Student ID</span>
+                        <strong>{{ student.student_id }}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <span>Name</span>
+                        <strong>{{ student.name }}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <span>Email</span>
+                        <strong>{{ student.email }}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <span>Phone</span>
+                        <strong>{{ student.phone }}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <span>Course</span>
+                        <strong>{{ student.course }}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <span>Year</span>
+                        <strong>{{ student.year }}</strong>
+                    </div>
+                    <div class="detail-card full-width">
+                        <span>Address</span>
+                        <strong>{{ student.address }}</strong>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

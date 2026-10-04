@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">S</div>
+                <div>
+                    <strong>StudentMS</strong>
+                    <small>Admin Panel</small>
+                </div>
+            </div>
+            <nav class="side-nav">
+                <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+                <a href="{{ url_for('students') }}">👨‍🎓 Students</a>
+                <a href="{{ url_for('students') }}">＋ Add Student</a>
+                <a href="{{ url_for('courses') }}">📚 Courses</a>
+                <a href="{{ url_for('reports') }}">📈 Reports</a>
+                <a class="active" href="{{ url_for('settings') }}">⚙️ Settings</a>
+            </nav>
+        </aside>
+
+        <main class="main-panel">
+            <header class="topbar">
+                <div class="page-title-wrap">
+                    <button class="mobile-menu-btn" type="button">☰</button>
+                    <div>
+                        <p class="eyebrow">System</p>
+                        <h1>Settings</h1>
+                    </div>
+                </div>
+            </header>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <h3>Application Settings</h3>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <span>App Name</span>
+                        <strong>Student Management System</strong>
+                    </div>
+                    <div class="detail-card">
+                        <span>Database</span>
+                        <strong>SQLite</strong>
+                    </div>
+                    <div class="detail-card">
+                        <span>Total Records</span>
+                        <strong>{{ summary.total_students }}</strong>
+                    </div>
+                    <div class="detail-card">
+                        <span>System Status</span>
+                        <strong>Online</strong>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

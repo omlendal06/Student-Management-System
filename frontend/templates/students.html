@@ -7,47 +7,103 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="container">
+    <div class="app-shell">
         <aside class="sidebar">
-            <h2>StudentMS</h2>
-            <nav>
-                <a href="{{ url_for('dashboard') }}">Dashboard</a>
-                <a class="active" href="{{ url_for('students') }}">Students</a>
+            <div class="brand">
+                <div class="brand-mark">S</div>
+                <div>
+                    <strong>StudentMS</strong>
+                    <small>Admin Panel</small>
+                </div>
+            </div>
+
+            <nav class="side-nav">
+                <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+                <a class="active" href="{{ url_for('students') }}">👨‍🎓 Students</a>
+                <a href="{{ url_for('students') }}">＋ Add Student</a>
+                <a href="{{ url_for('courses') }}">📚 Courses</a>
+                <a href="{{ url_for('reports') }}">📈 Reports</a>
+                <a href="{{ url_for('settings') }}">⚙️ Settings</a>
             </nav>
         </aside>
 
-        <main class="main-content">
+        <main class="main-panel">
             <header class="topbar">
-                <h1>Student Records</h1>
+                <div class="page-title-wrap">
+                    <button class="mobile-menu-btn" type="button">☰</button>
+                    <div>
+                        <p class="eyebrow">Management</p>
+                        <h1>Students</h1>
+                    </div>
+                </div>
+
+                <div class="topbar-actions">
+                    <form class="global-search" method="get" action="{{ url_for('search_students') }}">
+                        <input type="search" name="q" value="{{ keyword or '' }}" placeholder="Search students">
+                    </form>
+                    <div class="profile-pill">
+                        <div class="avatar">A</div>
+                        <div>
+                            <strong>Admin</strong>
+                            <small>Administrator</small>
+                        </div>
+                    </div>
+                </div>
             </header>
 
-            <section class="card form-card">
-                <h3>Add Student</h3>
+            <section class="panel form-panel">
+                <div class="panel-header">
+                    <h3>Add Student</h3>
+                    <a class="text-link" href="{{ url_for('dashboard') }}">Back to dashboard</a>
+                </div>
+
                 {% if error %}
-                <div class="alert">{{ error }}</div>
+                <div class="alert-box">{{ error }}</div>
                 {% endif %}
-                <form method="POST" action="{{ url_for('students') }}">
+
+                <form class="student-form" method="POST" action="{{ url_for('students') }}">
                     <div class="form-grid">
-                        <input type="text" name="student_id" placeholder="Student ID" required>
-                        <input type="text" name="name" placeholder="Name" required>
-                        <input type="email" name="email" placeholder="Email" required>
-                        <input type="text" name="phone" placeholder="Phone" required>
-                        <input type="text" name="course" placeholder="Course" required>
-                        <input type="text" name="year" placeholder="Year" required>
-                        <textarea name="address" placeholder="Address" required></textarea>
+                        <label>
+                            <span>Student ID</span>
+                            <input type="text" name="student_id" placeholder="e.g. STU-101" required>
+                        </label>
+                        <label>
+                            <span>Full Name</span>
+                            <input type="text" name="name" placeholder="Student name" required>
+                        </label>
+                        <label>
+                            <span>Email</span>
+                            <input type="email" name="email" placeholder="student@example.com" required>
+                        </label>
+                        <label>
+                            <span>Phone</span>
+                            <input type="text" name="phone" placeholder="9876543210" required>
+                        </label>
+                        <label>
+                            <span>Course</span>
+                            <input type="text" name="course" placeholder="Computer Science" required>
+                        </label>
+                        <label>
+                            <span>Year</span>
+                            <input type="text" name="year" placeholder="1" required>
+                        </label>
+                        <label class="full-width">
+                            <span>Address</span>
+                            <textarea name="address" placeholder="Student address" required></textarea>
+                        </label>
                     </div>
-                    <button class="button primary" type="submit">Save Student</button>
+
+                    <div class="form-actions">
+                        <button class="primary-btn" type="submit">Save Student</button>
+                    </div>
                 </form>
             </section>
 
-            <section class="card">
-                <h3>All Students</h3>
-                <div class="search-box">
-                    <form method="GET" action="{{ url_for('search_students') }}">
-                        <input type="text" name="q" value="{{ keyword or '' }}" placeholder="Search by name or course">
-                        <button class="button" type="submit">Search</button>
-                    </form>
+            <section class="panel table-panel">
+                <div class="panel-header">
+                    <h3>All Students</h3>
                 </div>
+
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -55,10 +111,10 @@
                                 <th>Student ID</th>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Phone</th>
                                 <th>Course</th>
                                 <th>Year</th>
                                 <th>Address</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -67,10 +123,16 @@
                                 <td>{{ student.student_id }}</td>
                                 <td>{{ student.name }}</td>
                                 <td>{{ student.email }}</td>
-                                <td>{{ student.phone }}</td>
                                 <td>{{ student.course }}</td>
                                 <td>{{ student.year }}</td>
                                 <td>{{ student.address }}</td>
+                                <td class="action-cell">
+                                    <a class="small-btn secondary" href="{{ url_for('student_detail', student_id=student.student_id) }}">View</a>
+                                    <a class="small-btn" href="{{ url_for('edit_student', student_id=student.student_id) }}">Edit</a>
+                                    <form method="post" action="{{ url_for('delete_student', student_id=student.student_id) }}">
+                                        <button class="small-btn danger" type="submit">Delete</button>
+                                    </form>
+                                </td>
                             </tr>
                             {% else %}
                             <tr>
@@ -83,5 +145,15 @@
             </section>
         </main>
     </div>
+
+    <script>
+        const menuButton = document.querySelector('.mobile-menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        if (menuButton && sidebar) {
+            menuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+            });
+        }
+    </script>
 </body>
 </html>

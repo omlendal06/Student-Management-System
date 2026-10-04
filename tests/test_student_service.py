@@ -78,3 +78,28 @@ def test_dashboard_summary_contains_student_details(service):
     assert summary["total_students"] >= 1
     assert len(summary["all_students"]) >= 1
     assert any(student["name"] == "Dana White" for student in summary["all_students"])
+
+
+def test_dashboard_summary_includes_course_distribution(service):
+    service.add_student({
+        "student_id": "STU-201",
+        "name": "Eva Stone",
+        "email": "eva@example.com",
+        "phone": "9000000001",
+        "course": "Computer Science",
+        "year": "1",
+        "address": "Chennai"
+    })
+    service.add_student({
+        "student_id": "STU-202",
+        "name": "Frank Lane",
+        "email": "frank@example.com",
+        "phone": "9000000002",
+        "course": "Computer Science",
+        "year": "2",
+        "address": "Nagpur"
+    })
+
+    summary = service.get_dashboard_summary()
+
+    assert any(item["course"] == "Computer Science" for item in summary["course_distribution"])

@@ -1,3 +1,5 @@
+# This file handles the database setup for the entire project.
+# It creates the SQLite database and loads the required schema when needed.
 import os
 import sqlite3
 
@@ -11,6 +13,8 @@ SCHEMA_FILE = os.path.join(ROOT_DIR, "database", "schema.sql")
 def ensure_database_folder(database_path=None):
     """Create the database folder if it does not exist."""
     target = database_path or DEFAULT_DATABASE_PATH
+
+    # In-memory SQLite databases use a URI-like path and do not need a folder.
     if target.startswith("file:"):
         return target
 

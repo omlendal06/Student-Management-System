@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">S</div>
+                <div>
+                    <strong>StudentMS</strong>
+                    <small>Admin Panel</small>
+                </div>
+            </div>
+            <nav class="side-nav">
+                <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+                <a class="active" href="{{ url_for('students') }}">👨‍🎓 Students</a>
+                <a href="{{ url_for('students') }}">＋ Add Student</a>
+                <a href="{{ url_for('courses') }}">📚 Courses</a>
+                <a href="{{ url_for('reports') }}">📈 Reports</a>
+                <a href="{{ url_for('settings') }}">⚙️ Settings</a>
+            </nav>
+        </aside>
+
+        <main class="main-panel">
+            <header class="topbar">
+                <div class="page-title-wrap">
+                    <button class="mobile-menu-btn" type="button">☰</button>
+                    <div>
+                        <p class="eyebrow">Update</p>
+                        <h1>Edit Student</h1>
+                    </div>
+                </div>
+            </header>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <h3>Student Information</h3>
+                </div>
+
+                {% if error %}
+                <div class="alert-box">{{ error }}</div>
+                {% endif %}
+
+                <form class="student-form" method="POST" action="{{ url_for('edit_student', student_id=student.student_id) }}">
+                    <div class="form-grid">
+                        <label>
+                            <span>Student ID</span>
+                            <input type="text" name="student_id" value="{{ student.student_id }}" required>
+                        </label>
+                        <label>
+                            <span>Full Name</span>
+                            <input type="text" name="name" value="{{ student.name }}" required>
+                        </label>
+                        <label>
+                            <span>Email</span>
+                            <input type="email" name="email" value="{{ student.email }}" required>
+                        </label>
+                        <label>
+                            <span>Phone</span>
+                            <input type="text" name="phone" value="{{ student.phone }}" required>
+                        </label>
+                        <label>
+                            <span>Course</span>
+                            <input type="text" name="course" value="{{ student.course }}" required>
+                        </label>
+                        <label>
+                            <span>Year</span>
+                            <input type="text" name="year" value="{{ student.year }}" required>
+                        </label>
+                        <label class="full-width">
+                            <span>Address</span>
+                            <textarea name="address" required>{{ student.address }}</textarea>
+                        </label>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="primary-btn" type="submit">Update Student</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

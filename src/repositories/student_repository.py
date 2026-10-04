@@ -1,3 +1,5 @@
+# This repository layer is responsible for all database operations.
+# It talks directly to SQLite and keeps the rest of the project cleaner.
 import sqlite3
 
 from src.utils.database import DEFAULT_DATABASE_PATH, initialize_database, load_schema_sql
@@ -7,6 +9,7 @@ class StudentRepository:
     """This class handles all database actions related to students."""
 
     def __init__(self, database_path=None):
+        """Choose a normal file database or an in-memory database for tests."""
         if database_path == ":memory:":
             self.database_path = "file:student_management_memory?mode=memory&cache=shared"
         else:
@@ -18,6 +21,8 @@ class StudentRepository:
         connection = sqlite3.connect(self.database_path, uri=self.database_path.startswith("file:"))
         connection.row_factory = sqlite3.Row
 
+        # For in-memory SQLite databases, we need to apply the schema again
+        # on each new connection so every connection sees the same tables.
         if self.database_path.startswith("file:"):
             connection.executescript(load_schema_sql())
 
@@ -120,7 +125,7 @@ class StudentRepository:
             return row["total"] if row else 0
 
     def get_recent_students(self, limit=5):
-        """Return the most newly added students."""
+        """Return the most recently added students."""
         with self._connect() as connection:
             rows = connection.execute(
                 "SELECT * FROM students ORDER BY id DESC LIMIT ?",

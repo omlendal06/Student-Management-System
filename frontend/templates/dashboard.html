@@ -7,100 +7,276 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="container">
+    <div class="app-shell">
         <aside class="sidebar">
-            <h2>StudentMS</h2>
-            <nav>
-                <a class="active" href="{{ url_for('dashboard') }}">Dashboard</a>
-                <a href="{{ url_for('students') }}">Students</a>
+            <div class="brand">
+                <div class="brand-mark">S</div>
+                <div>
+                    <strong>StudentMS</strong>
+                    <small>Admin Panel</small>
+                </div>
+            </div>
+
+            <nav class="side-nav">
+                <a class="active" href="{{ url_for('dashboard') }}">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="{{ url_for('students') }}">
+                    <span>👨‍🎓</span> Students
+                </a>
+                <a href="{{ url_for('students') }}">
+                    <span>＋</span> Add Student
+                </a>
+                <a href="{{ url_for('courses') }}">
+                    <span>📚</span> Courses
+                </a>
+                <a href="{{ url_for('reports') }}">
+                    <span>📈</span> Reports
+                </a>
+                <a href="{{ url_for('settings') }}">
+                    <span>⚙️</span> Settings
+                </a>
             </nav>
         </aside>
 
-        <main class="main-content">
+        <main class="main-panel">
             <header class="topbar">
-                <h1>Dashboard</h1>
-                <a class="button primary" href="{{ url_for('students') }}">Add Student</a>
+                <div class="page-title-wrap">
+                    <button class="mobile-menu-btn" type="button">☰</button>
+                    <div>
+                        <p class="eyebrow">Overview</p>
+                        <h1>Dashboard</h1>
+                    </div>
+                </div>
+
+                <div class="topbar-actions">
+                    <form class="global-search" action="{{ url_for('search_students') }}" method="get">
+                        <input type="search" name="q" placeholder="Search students" aria-label="Search students">
+                    </form>
+
+                    <button class="icon-button" type="button" aria-label="Notifications">
+                        🔔
+                        <span class="badge-dot">{{ summary.notifications|length }}</span>
+                    </button>
+
+                    <div class="profile-pill">
+                        <div class="avatar">A</div>
+                        <div>
+                            <strong>Admin</strong>
+                            <small>Administrator</small>
+                        </div>
+                    </div>
+                </div>
             </header>
 
+            <section class="welcome-strip">
+                <div>
+                    <p class="eyebrow">Welcome back</p>
+                    <h2>Welcome Back, Admin</h2>
+                </div>
+                <a class="primary-btn" href="{{ url_for('students') }}">+ Add Student</a>
+            </section>
+
             <section class="stats-grid">
-                <div class="card stat-card">
-                    <span class="label">Total Students</span>
-                    <strong>{{ summary.total_students }}</strong>
-                </div>
-                <div class="card stat-card">
-                    <span class="label">Total Courses</span>
-                    <strong>{{ summary.total_courses }}</strong>
-                </div>
-                <div class="card stat-card">
-                    <span class="label">Recent Students</span>
-                    <strong>{{ summary.recent_students|length }}</strong>
-                </div>
+                <article class="stats-card blue">
+                    <div class="stats-icon">👥</div>
+                    <div class="stats-meta">
+                        <span class="label">Total Students</span>
+                        <strong>{{ summary.total_students }}</strong>
+                        <small>+{{ summary.new_students or 0 }} this month</small>
+                    </div>
+                </article>
+
+                <article class="stats-card green">
+                    <div class="stats-icon">📚</div>
+                    <div class="stats-meta">
+                        <span class="label">Total Courses</span>
+                        <strong>{{ summary.total_courses }}</strong>
+                        <small>+2 this month</small>
+                    </div>
+                </article>
+
+                <article class="stats-card orange">
+                    <div class="stats-icon">🆕</div>
+                    <div class="stats-meta">
+                        <span class="label">New Students</span>
+                        <strong>{{ summary.new_students }}</strong>
+                        <small>This month</small>
+                    </div>
+                </article>
+
+                <article class="stats-card purple">
+                    <div class="stats-icon">✅</div>
+                    <div class="stats-meta">
+                        <span class="label">Active Students</span>
+                        <strong>{{ summary.active_students }}</strong>
+                        <small>{{ summary.active_percentage }}% of total</small>
+                    </div>
+                </article>
             </section>
 
-            <section class="card">
-                <h3>Recently Added Students</h3>
-                {% if summary.recent_students %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Student ID</th>
-                            <th>Name</th>
-                            <th>Course</th>
-                            <th>Year</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for student in summary.recent_students %}
-                        <tr>
-                            <td>{{ student.student_id }}</td>
-                            <td>{{ student.name }}</td>
-                            <td>{{ student.course }}</td>
-                            <td>{{ student.year }}</td>
-                        </tr>
+            <section class="content-grid">
+                <article class="panel chart-panel">
+                    <div class="panel-header">
+                        <h3>Enrollment Overview</h3>
+                        <span class="pill muted">Students</span>
+                    </div>
+                    <div class="chart-metrics">
+                        <strong>{{ summary.total_students }}</strong>
+                        <span>students</span>
+                    </div>
+                    <svg class="line-chart" viewBox="0 0 440 180" role="img" aria-label="Student enrollment chart">
+                        {% set chart_values = [] %}
+                        {% for point in summary.year_distribution %}
+                            {% set _ = chart_values.append(point.value) %}
                         {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <p>No student records available.</p>
-                {% endif %}
+                        {% if chart_values %}
+                            {% set max_value = chart_values|max %}
+                            {% set step = 345 / (chart_values|length - 1) if chart_values|length > 1 else 0 %}
+                            {% set coords = [] %}
+                            {% for value in chart_values %}
+                                {% set index = loop.index0 %}
+                                {% set x = 30 + (index * step) %}
+                                {% set y = 150 - ((value / max_value) * 100 if max_value else 0) %}
+                                {% set _ = coords.append((x, y)) %}
+                            {% endfor %}
+                            <polyline points="{{ coords|map(attribute='0')|join(',') }}" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                            {% for point in coords %}
+                                <circle cx="{{ point[0] }}" cy="{{ point[1] }}" r="5" fill="#2563eb"></circle>
+                            {% endfor %}
+                        {% endif %}
+                    </svg>
+                    <div class="chart-labels">
+                        {% for value in summary.year_distribution %}
+                            <span>{{ value.label }}</span>
+                        {% endfor %}
+                    </div>
+                </article>
+
+                <article class="panel">
+                    <div class="panel-header">
+                        <h3>Course Distribution</h3>
+                        <span class="pill success">Live</span>
+                    </div>
+
+                    <div class="donut-wrap">
+                        <div class="donut-chart" aria-label="Course distribution chart">
+                            {% set donut_total = summary.course_distribution|sum(attribute='count') %}
+                            {% if donut_total %}
+                                <div class="donut-inner">
+                                    <strong>{{ summary.total_courses }}</strong>
+                                    <span>courses</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <ul class="legend-list">
+                        {% for item in summary.course_distribution[:4] %}
+                        <li>
+                            <span class="legend-dot" style="background: {{ ['#2563eb','#10b981','#f59e0b','#8b5cf6'][loop.index0 % 4] }};"></span>
+                            <span>{{ item.course }}</span>
+                            <strong>{{ item.count }}</strong>
+                        </li>
+                        {% else %}
+                        <li>No course data available.</li>
+                        {% endfor %}
+                    </ul>
+                </article>
             </section>
 
-            <section class="card">
-                <h3>All Student Details</h3>
-                {% if summary.all_students %}
+            <section class="secondary-grid">
+                <article class="panel">
+                    <div class="panel-header">
+                        <h3>Quick Actions</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <a class="action-btn primary" href="{{ url_for('students') }}">+ Add Student</a>
+                        <a class="action-btn secondary" href="{{ url_for('students') }}">View Students</a>
+                        <a class="action-btn secondary" href="{{ url_for('reports') }}">Generate Report</a>
+                        <a class="action-btn secondary" href="{{ url_for('courses') }}">Manage Courses</a>
+                    </div>
+                </article>
+
+                <article class="panel">
+                    <div class="panel-header">
+                        <h3>Notifications</h3>
+                    </div>
+                    <ul class="notification-list">
+                        {% for item in summary.notifications %}
+                        <li>
+                            <span class="status-dot"></span>
+                            <div>
+                                <strong>{{ item.title }}</strong>
+                                <small>{{ item.message }}</small>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </article>
+            </section>
+
+            <section class="panel table-panel">
+                <div class="panel-header">
+                    <h3>Recent Students</h3>
+                    <a href="{{ url_for('students') }}" class="text-link">View all</a>
+                </div>
+
                 <div class="table-wrapper">
                     <table>
                         <thead>
                             <tr>
                                 <th>Student ID</th>
                                 <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
                                 <th>Course</th>
                                 <th>Year</th>
-                                <th>Address</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for student in summary.all_students %}
+                            {% for student in summary.recent_students %}
                             <tr>
                                 <td>{{ student.student_id }}</td>
-                                <td>{{ student.name }}</td>
-                                <td>{{ student.email }}</td>
-                                <td>{{ student.phone }}</td>
+                                <td>
+                                    <div class="name-cell">
+                                        <span class="mini-avatar">{{ student.name[0] if student.name else 'S' }}</span>
+                                        <span>{{ student.name }}</span>
+                                    </div>
+                                </td>
                                 <td>{{ student.course }}</td>
                                 <td>{{ student.year }}</td>
-                                <td>{{ student.address }}</td>
+                                <td>{{ student.email }}</td>
+                                <td><span class="badge success">Active</span></td>
+                                <td class="action-cell">
+                                    <a class="small-btn secondary" href="{{ url_for('student_detail', student_id=student.student_id) }}">View</a>
+                                    <a class="small-btn" href="{{ url_for('edit_student', student_id=student.student_id) }}">Edit</a>
+                                    <form method="post" action="{{ url_for('delete_student', student_id=student.student_id) }}">
+                                        <button class="small-btn danger" type="submit">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7">No recent students available.</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-                {% else %}
-                <p>No students found.</p>
-                {% endif %}
             </section>
         </main>
     </div>
+
+    <script>
+        const menuButton = document.querySelector('.mobile-menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        if (menuButton && sidebar) {
+            menuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+            });
+        }
+    </script>
 </body>
 </html>

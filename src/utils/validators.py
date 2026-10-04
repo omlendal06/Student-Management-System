@@ -1,3 +1,5 @@
+# This file contains simple validation helpers.
+# These functions check whether user input is empty, valid, or in the expected format.
 import re
 
 

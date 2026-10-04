@@ -1,3 +1,5 @@
+# This file defines the Student data model.
+# A model is a simple class that describes the structure of a student record.
 from dataclasses import dataclass
 
 
