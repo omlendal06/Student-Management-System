@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>StudentMS</h2>
+            <nav>
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a class="active" href="{{ url_for('students') }}">Students</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <h1>Student Records</h1>
+            </header>
+
+            <section class="card form-card">
+                <h3>Add Student</h3>
+                {% if error %}
+                <div class="alert">{{ error }}</div>
+                {% endif %}
+                <form method="POST" action="{{ url_for('students') }}">
+                    <div class="form-grid">
+                        <input type="text" name="student_id" placeholder="Student ID" required>
+                        <input type="text" name="name" placeholder="Name" required>
+                        <input type="email" name="email" placeholder="Email" required>
+                        <input type="text" name="phone" placeholder="Phone" required>
+                        <input type="text" name="course" placeholder="Course" required>
+                        <input type="text" name="year" placeholder="Year" required>
+                        <textarea name="address" placeholder="Address" required></textarea>
+                    </div>
+                    <button class="button primary" type="submit">Save Student</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <h3>All Students</h3>
+                <div class="search-box">
+                    <form method="GET" action="{{ url_for('search_students') }}">
+                        <input type="text" name="q" value="{{ keyword or '' }}" placeholder="Search by name or course">
+                        <button class="button" type="submit">Search</button>
+                    </form>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Course</th>
+                                <th>Year</th>
+                                <th>Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr>
+                                <td>{{ student.student_id }}</td>
+                                <td>{{ student.name }}</td>
+                                <td>{{ student.email }}</td>
+                                <td>{{ student.phone }}</td>
+                                <td>{{ student.course }}</td>
+                                <td>{{ student.year }}</td>
+                                <td>{{ student.address }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7">No students found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

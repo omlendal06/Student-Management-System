@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>StudentMS</h2>
+            <nav>
+                <a class="active" href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('students') }}">Students</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <h1>Dashboard</h1>
+                <a class="button primary" href="{{ url_for('students') }}">Add Student</a>
+            </header>
+
+            <section class="stats-grid">
+                <div class="card stat-card">
+                    <span class="label">Total Students</span>
+                    <strong>{{ summary.total_students }}</strong>
+                </div>
+                <div class="card stat-card">
+                    <span class="label">Total Courses</span>
+                    <strong>{{ summary.total_courses }}</strong>
+                </div>
+                <div class="card stat-card">
+                    <span class="label">Recent Students</span>
+                    <strong>{{ summary.recent_students|length }}</strong>
+                </div>
+            </section>
+
+            <section class="card">
+                <h3>Recently Added Students</h3>
+                {% if summary.recent_students %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Course</th>
+                            <th>Year</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in summary.recent_students %}
+                        <tr>
+                            <td>{{ student.student_id }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>{{ student.course }}</td>
+                            <td>{{ student.year }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No student records available.</p>
+                {% endif %}
+            </section>
+
+            <section class="card">
+                <h3>All Student Details</h3>
+                {% if summary.all_students %}
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Course</th>
+                                <th>Year</th>
+                                <th>Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in summary.all_students %}
+                            <tr>
+                                <td>{{ student.student_id }}</td>
+                                <td>{{ student.name }}</td>
+                                <td>{{ student.email }}</td>
+                                <td>{{ student.phone }}</td>
+                                <td>{{ student.course }}</td>
+                                <td>{{ student.year }}</td>
+                                <td>{{ student.address }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p>No students found.</p>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+</body>
+</html>
